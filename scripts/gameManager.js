@@ -6,7 +6,13 @@ let shieldTop;
 let enemies = []; 
 let gameLevel = 0; 
 let xOffset = 30; 
-let yOffset = 50; 
+let yOffset = 50;
+let enemyMovement = { 
+    rythm: 0, 
+    moveStep: 1, 
+    turn: false, 
+    way: 1 
+}; 
  
 // initialise les variables nécessaires au bon déroulement d’une partie
 function initGame() 
@@ -119,3 +125,48 @@ function createEnemies()
         } 
     } 
 }
+
+// Animations ennemies 
+// À chaque fois que ce code est exécuté, la propriété .rythm de la variable enemyMovement est incrémentée et, lorsque sa valeur atteint un multiple de la vitesse souhaitée, elle met à jour la position de tous les vaisseaux encore en jeu
+function updateEnemies() 
+{ 
+    let speed = Math.max(4, enemies.length * 2); 
+    if (++enemyMovement.rythm % speed == 0) 
+    { 
+        enemyMovement.moveStep = enemyMovement.moveStep > 4 ? 1 : enemyMovement.moveStep; 
+        let xLeftLimit = Math.max(...enemies.map(e => e.x)) + 60; 
+        let xRightLimit = Math.min(...enemies.map(e => e.x)); 
+        let maxLeft = $('.gameBoard').width(); 
+        if (enemyMovement.turn) 
+        { 
+                enemyMovement.turn = false; 
+        } 
+        else if (xLeftLimit > maxLeft) 
+        { 
+            enemyMovement.way = -1; 
+            enemiesGoDown(); 
+            enemyMovement.turn = true; 
+        } 
+        else if (xRightLimit < 25) 
+        { 
+            enemyMovement.way = 1; 
+            enemiesGoDown(); 
+            enemyMovement.turn = true; 
+        } 
+        enemies.forEach((e, i) =>
+            { 
+                e.x +=  enemyMovement.turn ? 0 : 25 * enemyMovement.way; 
+                e.phase  = e.phase == 1 ? 2 : 1; 
+                e.img =  document.querySelector("#imgEnemy-" + e.line + "-" + e.phase); 
+                e.shoot  = false; 
+            } 
+        ); 
+    } 
+    enemiesContext.clearRect(0, 0, enemiesCanvas.width, enemiesCanvas.height); 
+    drawEnemies(); 
+}
+
+function enemiesGoDown() 
+{ 
+    enemies.forEach(e => e.y += 15); 
+} 

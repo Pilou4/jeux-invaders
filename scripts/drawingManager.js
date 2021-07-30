@@ -43,7 +43,8 @@ function drawCannon()
 } 
  
 function renderGame() 
-{ 
+{
+    updateEnemies();
 } 
 
 // parcourt l’intégralité du tableau des boucliers et exécute la fonction drawShield() pour dessiner chacun d’eux individuellement

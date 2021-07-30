@@ -52,6 +52,7 @@ function drawShields()
     shields.forEach(e => drawShield(e)); 
 } 
  
+// Affichage des boucliers
 // efface, sur le calque réservé aux boucliers, l’emplacement du bouclier reçu en paramètre, grâce à la méthode .clearRect(). Elle parcourt ensuite l’ensemble des éléments composant le bouclier en ne dessinant, à l’aide de la méthode .fillRect(), que ceux qui ont leur propriété .value à 1.
 function drawShield(shield) 
 { 
@@ -67,4 +68,17 @@ function drawShield(shield)
             } 
         } 
     ); 
+}
+
+// Affichage des ennemies
+// Le calque réservé à la visualisation des vaisseaux ennemis est effacé à l’aide de la méthode JavaScript .clearRect(), puis, la méthode JavaScript .forEach() appliquée sur la variable tableau enemies, parcourt l’intégralité des ennemis et dessine chacun d’eux à sa position en x et en y.
+function drawEnemies() 
+{ 
+    enemiesContext.clearRect(0, 0, enemiesCanvas.width, enemiesCanvas.height); 
+    enemies.forEach(e => drawEnemy(e)); 
 } 
+ 
+function drawEnemy(enemy) 
+{ 
+    enemiesContext.drawImage(enemy.img, enemy.x, enemy.y); 
+}

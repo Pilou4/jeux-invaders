@@ -3,6 +3,10 @@ let cannonVisible = true;
 let gamePlay;
 let shields = []; 
 let shieldTop;
+let enemies = []; 
+let gameLevel = 0; 
+let xOffset = 30; 
+let yOffset = 50; 
  
 // initialise les variables nécessaires au bon déroulement d’une partie
 function initGame() 
@@ -20,9 +24,11 @@ function initGame()
 function startGame() 
 { 
     initCanvases(); 
-    initGame(); 
+    initGame();
     drawCannon();
     drawShields();
+    createEnemies();
+    drawEnemies();
     gamePlay = setInterval(renderGame, 10); 
 }
 
@@ -88,4 +94,28 @@ function createShields()
         ); 
         position += repartition * 3; 
     }
-} 
+}
+
+// Créations des ennemies
+function createEnemies() 
+{ 
+    enemies = []; 
+    for (let line = 0; line < 5; line++) 
+    { 
+        for (let column = 0; column < 11; column++) 
+        { 
+           enemies.push(
+               { 
+                    x: xOffset + (column * 60), 
+                    y: yOffset + (line * 55) + (10 * gameLevel), 
+                    phase: 1, 
+                    score: line == 0 ? 30 : line < 3 ? 20 : 10, 
+                    line: (line == 0 ? 3 : line < 3 ? 2 : 1), 
+                    realLine: line, 
+                    realColumn: column, 
+                    img: document.querySelector("#imgEnemy-" + (line == 0 ? 3 : line < 3 ? 2 : 1) + "-1") 
+                } 
+            ); 
+        } 
+    } 
+}

@@ -45,6 +45,7 @@ function drawCannon()
 function renderGame() 
 {
     updateEnemies();
+    updateBullets();
 } 
 
 // parcourt l’intégralité du tableau des boucliers et exécute la fonction drawShield() pour dessiner chacun d’eux individuellement
@@ -71,15 +72,68 @@ function drawShield(shield)
     ); 
 }
 
-// Affichage des ennemies
+
 // Le calque réservé à la visualisation des vaisseaux ennemis est effacé à l’aide de la méthode JavaScript .clearRect(), puis, la méthode JavaScript .forEach() appliquée sur la variable tableau enemies, parcourt l’intégralité des ennemis et dessine chacun d’eux à sa position en x et en y.
 function drawEnemies() 
 { 
     enemiesContext.clearRect(0, 0, enemiesCanvas.width, enemiesCanvas.height); 
     enemies.forEach(e => drawEnemy(e)); 
 } 
- 
+
+// Affichage des ennemies
 function drawEnemy(enemy) 
 { 
     enemiesContext.drawImage(enemy.img, enemy.x, enemy.y); 
 }
+
+
+// Efface le calque dédié à l’affichage des missiles et parcourt l’intégralité du tableau des missiles, exécutant la fonction drawBullet() pour chacun d’eux.
+function drawBullets() 
+{ 
+    bulletsContext.clearRect(0, 0, bulletsCanvas.width, bulletsCanvas.height); 
+    bullets.forEach(e => drawBullet(e)); 
+} 
+
+// Affiche le projectile comme un simple rectangle, à l’aide de la méthode JavaScript .fillRect(), avec une couleur spécifique selon l’origine du tir : blanc pour les tirs provenant du canon et orange pour ceux largués par les vaisseaux ennemis. La couleur est affectée à la propriété .fillStyle
+function drawBullet(bullet) 
+{ 
+    bulletsContext.fillStyle = bullet.type == 1 ? "rgb(200, 200, 0)" : "rgb(200, 100, 0)"; 
+    bulletsContext.fillRect(bullet.x, bullet.y, 4, 12); 
+}
+
+// Ce code dessine une explosion à la position du missile supprimé.
+// Une explosion se devant d’être fugace, elle est effacée un dixième de seconde plus tard à l’aide de la méthode .clearRect(), exécutée par la fonction JavaScript setTimeout().
+function drawBulletExplosion(bullet) 
+{ 
+    enemiesContext.drawImage(imgExplosion1, bullet.x - 16, 0); 
+    setTimeout(e => enemiesContext.clearRect(bullet.x - 16, 0, 32, 32), 100); 
+} 
+
+
+//  les missiles percutant le bouclier sont retirés de l’aire de jeu dans le même temps
+// 
+function destroyShieldPart(shield, collision) 
+{ 
+    let sLine = collision.coords.line; 
+    let mLine = Math.max(collision.coords.line - 4, 0); 
+    let sColumn = Math.max(collision.coords.column - 3, 0); 
+    let mColumn = Math.min(collision.coords.column + 3, 39); 
+    for (let line = sLine; line >= mLine; line--) 
+    { 
+        for (let column = sColumn; column <= mColumn; column++) 
+        { 
+            let wallPart = shield.walls.find (e => e.coords.line == line && e.coords.column == column); 
+            if (wallPart) 
+            { 
+                wallPart.value = 0; 
+            } 
+        } 
+    } 
+}
+
+function destroyEnemy(enemy) 
+{ 
+    enemiesContext.clearRect(enemy.x, enemy.y, 48, 48); 
+    enemiesContext.drawImage(imgExplosion3, enemy.x, enemy.y); 
+    setTimeout(e => enemiesContext.clearRect(enemy.x, enemy.y, 48, 48), 100); 
+} 

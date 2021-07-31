@@ -12,7 +12,10 @@ let enemyMovement = {
     moveStep: 1, 
     turn: false, 
     way: 1 
-}; 
+};
+let cannonReady = true; 
+let bullets = [];
+
  
 // initialise les variables nécessaires au bon déroulement d’une partie
 function initGame() 
@@ -160,13 +163,110 @@ function updateEnemies()
                 e.img =  document.querySelector("#imgEnemy-" + e.line + "-" + e.phase); 
                 e.shoot  = false; 
             } 
-        ); 
+        );
     } 
     enemiesContext.clearRect(0, 0, enemiesCanvas.width, enemiesCanvas.height); 
-    drawEnemies(); 
+    drawEnemies();
+    if (enemies.length == 0) 
+    { 
+        gameLevel++; 
+        createEnemies(); 
+        drawEnemies(); 
+        createShields(); 
+        drawShields(); 
+    }  
 }
 
 function enemiesGoDown() 
 { 
     enemies.forEach(e => e.y += 15); 
+}
+
+// Tirer les missiles
+// Cette fonction commence par analyser la variable cannonReady pour savoir si un tir est possible. Le cas échéant, elle crée un missile de type 1, valeur que nous retenons par convention pour indiquer un missile provenant du canon du joueur et devant se déplacer vers le haut de l’écran à la rencontre des ennemis. Le missile est créé aux coordonnées de la position courante du canon, et est ensuite ajouté au tableau des missiles en jeu, bullets, à l’aide de la méthode JavaScript .push().
+function cannonShoot() 
+{ 
+    if (cannonReady) 
+    { 
+        cannonReady = false;
+        bullets.push(
+            { 
+                type: 1, 
+                x: cannon.x + 30 + (Math.random() < .5 ? - (parseInt(Math.random() * 3)) : (parseInt(Math.random() * 3))), 
+                y: cannon.y - 12 
+            } 
+        );
+    } 
+}
+
+// Ce code parcourt l’ensemble des projectiles en jeu et modifie leur position verticale en fonction de leur direction.
+function updateBullets() 
+{ 
+    bullets.forEach((e, i) =>
+        {
+            e.y += e.type == 1 ? -10 : 10;
+            if (e.type == 1) 
+            { 
+                if (!checkCannonBullet(e, i)) 
+                { 
+                    return; 
+                } 
+            } 
+        }
+    ); 
+}
+
+// Ce code a pour charge de vérifier la position d’un missile passé en paramètre et de le supprimer s’il atteint le haut de l’aire de jeu.
+// Il faut l’exécuter à chaque déplacement de missile.
+//function checkCannonBullet(bullet, bulletIndex) 
+//{ 
+//    if (bullet.y < 0) 
+//    { 
+//           cannonReady = true; 
+//           bullets.splice(bulletIndex, 1);  
+//           drawBulletExplosion(bullet); 
+//    } 
+//    return true; 
+//}
+
+
+// Cette modification intègre, dans la première partie de son code, une détection d’impact sur un éventuel bouclier qui se trouverait sur le chemin du missile analysé.
+// Dans un premier temps, il s’agit de détecter si le missile est positionné sous un bouclier. Pour cela, il suffit de comparer sa position latérale par rapport à celle des boucliers.
+// Le cas échéant, le système vérifie s’il existe, dans l’éventuel bouclier détecté, un ou plusieurs éléments sur le chemin du projectile dont la propriété .value serait encore à 1.
+// Lorsque de tels éléments existent dans le bouclier, cela signifie que ce dernier est encore résistant sur le chemin du missile et donc que celui-ci ne peut pas continuer sa route après contact.
+// Les éléments intacts du bouclier sont alors triés de manière à récupérer celui d’entre eux verticalement le plus proche du projectile.
+function checkCannonBullet(bullet, bulletIndex) 
+{ 
+    let shield = shields.filter(f => bullet.x > f.x && bullet.x < f.x + 160)[0]; 
+    if (shield) 
+    { 
+        let column = parseInt((bullet.x - shield.x) / 4); 
+        let collision = shield.walls.filter(f => f.coords.column == column && f.value == 1 && bullet.y < (f.coords.line * 4) + shieldTop).sort((a, b) => a.coords.line > b.coords.line ? -1 : 1)[0]; 
+        if (collision) 
+        { 
+            destroyShieldPart(shield, collision); 
+            drawShield(shield); 
+            cannonReady = true; 
+            bullets.splice(bulletIndex, 1); 
+            return false; 
+        } 
+    } 
+    let target = enemies.filter(f => bullet.x >= f.x && bullet.x < f.x + 48 && bullet.y >= f.y && bullet.y <= f.y + 12).sort((a, b) => a.y > b.y ? -1 : 1)[0]; 
+    if (target) 
+    { 
+        if (bullet.y < target.y + 48) 
+        { 
+            cannonReady = true; 
+            bullets.splice(bulletIndex, 1); 
+            enemies.splice(enemies.indexOf(target), 1); 
+            destroyEnemy(target); 
+        } 
+    } 
+    else if (bullet.y < 0) 
+    { 
+        cannonReady = true; 
+        bullets.splice(bulletIndex, 1); 
+        drawBulletExplosion(bullet); 
+    } 
+    return true; 
 } 

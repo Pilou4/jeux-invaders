@@ -15,6 +15,7 @@ let enemyMovement = {
 };
 let cannonReady = true; 
 let bullets = [];
+let saucer = "";
 
  
 // initialise les variables nécessaires au bon déroulement d’une partie
@@ -164,6 +165,25 @@ function updateEnemies()
                 e.shoot  = false; 
             } 
         );
+        if (Math.random() > .999 && saucer == "") 
+        { 
+            let type = Mat.random(); 
+            saucer = { 
+                x: type < .5 ? 0 : $('.gameBoard').width(), 
+                speed: type < .5 ? 4 : -4, 
+                score: 50 + (parseInt(Math.random() * 3) * 100) + (Math.random() > .5 ? 0 : 50) 
+        }; 
+    } 
+    if (saucer != "") 
+    { 
+        let maxLeft = $('.gameBoard').width(); 
+        saucer.x = parseInt(saucer.x + saucer.speed); 
+        if ((saucer.speed < 0 && saucer.x < -64) || (saucer.speed > 0 && saucer.x > maxLeft)) 
+        { 
+            saucer = ""; 
+        } 
+        drawSaucer(); 
+        } 
     } 
     enemiesContext.clearRect(0, 0, enemiesCanvas.width, enemiesCanvas.height); 
     drawEnemies();
@@ -213,7 +233,8 @@ function updateBullets()
                 } 
             } 
         }
-    ); 
+    );
+    drawBullets(); 
 }
 
 // Ce code a pour charge de vérifier la position d’un missile passé en paramètre et de le supprimer s’il atteint le haut de l’aire de jeu.
@@ -261,7 +282,14 @@ function checkCannonBullet(bullet, bulletIndex)
             enemies.splice(enemies.indexOf(target), 1); 
             destroyEnemy(target); 
         } 
-    } 
+    }
+    else if (saucer != "" && bullet.y <= 50 && bullet.x >= saucer.x && bullet.x <= saucer.x + 48) 
+    { 
+        cannonReady = true; 
+        bullets.splice(bulletIndex, 1); 
+        destroySaucer(); 
+        return false; 
+    }  
     else if (bullet.y < 0) 
     { 
         cannonReady = true; 

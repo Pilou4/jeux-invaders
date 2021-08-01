@@ -136,4 +136,20 @@ function destroyEnemy(enemy)
     enemiesContext.clearRect(enemy.x, enemy.y, 48, 48); 
     enemiesContext.drawImage(imgExplosion3, enemy.x, enemy.y); 
     setTimeout(e => enemiesContext.clearRect(enemy.x, enemy.y, 48, 48), 100); 
+}
+
+// Image socoupe volante
+function drawSaucer() 
+{ 
+    enemiesContext.clearRect(saucer.x - 4, 2, 64, 48); 
+    enemiesContext.drawImage(saucerImg, saucer.x, 2); 
+}
+
+// supprime la soucoupe volante de l’aire de jeu et qui montre une explosion lorsqu’un missile la touche.
+function destroySaucer() 
+{ 
+    enemiesContext.clearRect(saucer.x, 2, 48, 48); 
+    enemiesContext.drawImage(imgExplosion3, saucer.x, 2); 
+    setTimeout(e => enemiesContext.clearRect(saucer.x, 2, 48, 48), 100); 
+    saucer = ""; 
 } 

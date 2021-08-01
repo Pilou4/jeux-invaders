@@ -69,4 +69,65 @@ body
 .cache 
 { 
     display: none; 
+}
+#lives 
+{ 
+    display: inline-block; 
+    position: absolute; 
+    right: 10px; 
+    top: 3px; 
+}  
+.playerLive 
+{ 
+    width: 26px; 
+    display: inline-block; 
+    filter: grayscale(1) brightness(2); 
+}
+.gameOver 
+{ 
+    position: absolute; 
+    left: 30%; 
+    top: 46%; 
+    font-family: Rokkitt; 
+    font-size: 320%; 
+    font-weight: bold; 
+    letter-spacing: 26px; 
+    background: black; 
+    border: solid 1px white; 
+    text-align: center; 
+    display: inline-block; 
+    width: 580px; 
+}
+#playerScore, #highScore  
+{ 
+    font-family: Seymour One; 
+    font-size: 120%; 
+} 
+ 
+#playerScore 
+{ 
+    position: relative; 
+    left: 10px; 
+    display: inline-block; 
+    width: 190px; 
+} 
+ 
+#highScore 
+{ 
+    position: relative; 
+    left: 170px; 
+    display: inline-block; 
+    width: 190px; 
+} 
+ 
+#lblPlayerScore 
+{ 
+    position: relative; 
+    left: 10px; 
+} 
+ 
+#lblHighScore 
+{ 
+    position: relative; 
+    left: 170px; 
 } 

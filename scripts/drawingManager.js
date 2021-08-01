@@ -190,4 +190,17 @@ function destroyEnemyBullet(bullet)
 { 
     enemiesContext.drawImage(imgExplosion2, bullet.x - 16, bullet.y); 
     setTimeout(e => enemiesContext.clearRect(bullet.x - 16, bullet.y, 32, 32), 100); 
+}
+
+function drawLives() 
+{ 
+    let htmlString = String('<img class="playerLive" src="images/cannon.png">').repeat(numberOflives); 
+    $('#lives').html(htmlString); 
+}
+
+function destroyShieldLine(line) 
+{ 
+    let linePos = shieldTop + ((line - 2) * 12); 
+    shieldsContext.clearRect(0, linePos, $('.gameBoard').width(), 24); 
+    shields.forEach( e => e.walls.filter( f => f.coords.line <= line * 3).forEach(f => f.value = 0)); 
 } 

@@ -156,4 +156,38 @@ function destroySaucer()
     enemiesContext.drawImage(imgExplosion3, saucer.x, 2); 
     setTimeout(e => enemiesContext.clearRect(saucer.x, 2, 48, 48), 100); 
     saucer = ""; 
+}
+
+function destroyShieldPartFromEnemy(shield, collision) 
+{ 
+    let sLine = collision.coords.line; 
+    let mLine = Math.min(collision.coords.line + 4, 14); 
+    let sColumn = Math.max(collision.coords.column - 3, 0); 
+    let mColumn = Math.min(collision.coords.column + 3, 39); 
+    for (let line = sLine; line <= mLine; line++) 
+    { 
+        for (let column = sColumn; column <= mColumn; column++) 
+        { 
+            let wallPart = shield.walls.find (e => e.coords.line == line && e.coords.column == column); 
+            if (wallPart) 
+            { 
+                wallPart.value = 0; 
+            } 
+        } 
+    } 
+}
+
+function destroyCannon() 
+{ 
+    cannonContext.clearRect(cannon.x, cannon.y, 64, 64); 
+    cannonContext.drawImage(imgExplosion3, cannon.x + 8, cannon.y + 8); 
+    setTimeout(e => cannonContext.clearRect(cannon.x, cannon.y, 64, 64), 250); 
+    cannonVisible = false; 
+}
+
+// dettruit tirs enemies
+function destroyEnemyBullet(bullet) 
+{ 
+    enemiesContext.drawImage(imgExplosion2, bullet.x - 16, bullet.y); 
+    setTimeout(e => enemiesContext.clearRect(bullet.x - 16, bullet.y, 32, 32), 100); 
 } 

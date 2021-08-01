@@ -212,7 +212,7 @@ function enemiesGoDown()
 // Cette fonction commence par analyser la variable cannonReady pour savoir si un tir est possible. Le cas échéant, elle crée un missile de type 1, valeur que nous retenons par convention pour indiquer un missile provenant du canon du joueur et devant se déplacer vers le haut de l’écran à la rencontre des ennemis. Le missile est créé aux coordonnées de la position courante du canon, et est ensuite ajouté au tableau des missiles en jeu, bullets, à l’aide de la méthode JavaScript .push().
 function cannonShoot() 
 { 
-    if (cannonReady) 
+    if (cannonReady && cannonVisible) 
     { 
         cannonReady = false;
         bullets.push(
@@ -237,7 +237,14 @@ function updateBullets()
                 { 
                     return; 
                 } 
-            } 
+            }
+            if (e.type == 2) 
+            { 
+                if (!checkEnemyBulletHit(e, i)) 
+                { 
+                    return; 
+                } 
+            }   
         }
     );
     drawBullets(); 
@@ -263,7 +270,17 @@ function updateBullets()
 // Lorsque de tels éléments existent dans le bouclier, cela signifie que ce dernier est encore résistant sur le chemin du missile et donc que celui-ci ne peut pas continuer sa route après contact.
 // Les éléments intacts du bouclier sont alors triés de manière à récupérer celui d’entre eux verticalement le plus proche du projectile.
 function checkCannonBullet(bullet, bulletIndex) 
-{ 
+{
+    let enemyBullet = bullets.filter(e => e.type == 2 && e.x >= 
+        bullet.x - 2 && e.x <= bullet.x + 6 && bullet.y <= e.y + 12)[0]; 
+        if (enemyBullet) 
+        { 
+            bullets.splice(bulletIndex, 1); 
+            cannonnReady = true; 
+            bullets.splice(bullets.indexOf(enemyBullet), 1); 
+            destroyEnemyBullet(enemyBullet); 
+            return false; 
+        } 
     let shield = shields.filter(f => bullet.x > f.x && bullet.x < f.x + 160)[0]; 
     if (shield) 
     { 
@@ -314,4 +331,31 @@ function enemyShoot(enemy)
             y: enemy.y - 12 
         } 
     ); 
+}
+
+function checkEnemyBulletHit(bullet, bulletIndex) 
+{ 
+    let shield = shields.filter(f => bullet.x > f.x && bullet.x < f.x + 160)[0]; 
+    if (shield) 
+    { 
+        let column = parseInt((bullet.x - shield.x) / 4); 
+        let collision = shield.walls.filter(f => f.coords.column == column && f.value == 1 && bullet.y > (f.coords.line * 4) + shieldTop).sort((a, b) => a.coords.line < b.coords.line ? -1 : 1)[0]; 
+        if (collision) 
+        { 
+            destroyShieldPartFromEnemy(shield, collision); 
+            drawShields(); 
+            bullets.splice(bulletIndex, 1); 
+            return false; 
+        } 
+    }
+    if (bullet.y + 12 > cannon.y && bullet.x >= cannon.x && bullet.x <= cannon.x + 64 && cannonVisible) 
+    { 
+        bullets.splice(bullets.indexOf(bullet), 1); 
+        destroyCannon(); 
+    } 
+    if (bullet.y > cannon.y + 80) 
+    { 
+        bullets.splice(bullets.indexOf(bullet), 1); 
+    } 
+    return true; 
 } 

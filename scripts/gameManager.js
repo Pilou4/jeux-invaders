@@ -156,12 +156,18 @@ function updateEnemies()
             enemyMovement.way = 1; 
             enemiesGoDown(); 
             enemyMovement.turn = true; 
+        }
+        let canShoot = -1; 
+        if (Math.random() > .85) 
+        { 
+            canShoot = parseInt(Math.random() * enemies.length); 
         } 
         enemies.forEach((e, i) =>
             { 
                 e.x +=  enemyMovement.turn ? 0 : 25 * enemyMovement.way; 
                 e.phase  = e.phase == 1 ? 2 : 1; 
                 e.img =  document.querySelector("#imgEnemy-" + e.line + "-" + e.phase); 
+                e.shoot = canShoot == i;
                 e.shoot  = false; 
             } 
         );
@@ -297,4 +303,15 @@ function checkCannonBullet(bullet, bulletIndex)
         drawBulletExplosion(bullet); 
     } 
     return true; 
+} 
+
+function enemyShoot(enemy) 
+{ 
+    bullets.push( 
+        { 
+            type: 2, 
+            x: enemy.x + (parseInt(Math.random() * 48)), 
+            y: enemy.y - 12 
+        } 
+    ); 
 } 

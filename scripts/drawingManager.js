@@ -83,7 +83,11 @@ function drawEnemies()
 // Affichage des ennemies
 function drawEnemy(enemy) 
 { 
-    enemiesContext.drawImage(enemy.img, enemy.x, enemy.y); 
+    enemiesContext.drawImage(enemy.img, enemy.x, enemy.y);
+    if (enemy.shoot) 
+    { 
+        enemyShoot(enemy); 
+    } 
 }
 
 

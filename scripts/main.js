@@ -3,7 +3,7 @@ $(document).ready (init);
 function init() 
 { 
     $('body').on('keydown', manageKeyboardInput); 
-    startGame(); 
+    mainMenu(); 
 }
 
 // Permet de deplacer le vaiseau 
@@ -29,9 +29,22 @@ function manageKeyboardInput(e)
             case 81: 
                 cannon.x = Math.max(cannon.x - 20, 0); 
                 drawCannon(); 
-                break; 
+                break;
+                
             default: 
                 break; 
+        } 
+    }
+    else 
+    { 
+        if (e.keyCode == 80) 
+        { 
+            $('.mainMenu').fadeOut(3000, () =>
+                { 
+                    $('.mainMenu').addClass('cache'); 
+                    startGame(); 
+                } 
+            ); 
         } 
     } 
 } 

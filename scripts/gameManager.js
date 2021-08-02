@@ -9,14 +9,14 @@ let xOffset = 30;
 let yOffset = 50;
 let enemyMovement = { 
     rythm: 0, 
-    moveStep: 1, 
+    moveStep: 1,
     turn: false, 
     way: 1 
 };
 let cannonReady = true; 
 let bullets = [];
 let saucer = "";
-let numberOflives;
+let numberOfLives;
 let playerScore; 
 let highScore; 
  
@@ -50,6 +50,12 @@ function startGame()
     gamePlay = setInterval(renderGame, 10); 
 }
 
+function mainMenu() 
+{ 
+    $('.mainMenu').removeClass('cache').fadeIn(1000); 
+    highScore = +localStorage.getItem('Combat-HighScore') || 0; 
+    showHighScore();
+} 
 
 // changement variable t en pixel 
 // Crée les quatre boucliers en les répartissant équitablement sur la largeur disponible de l’aire de jeu
@@ -170,20 +176,19 @@ function updateEnemies()
 		{
 			canShoot = parseInt(Math.random() * enemies.length);
 		}
-		enemies
-			.forEach 	(
-							(e, i) => 	{
-											e.x += enemyMovement.turn ? 0 : 25 * enemyMovement.way;
-											e.phase = e.phase == 1 ? 2 : 1;
-											e.img = document.querySelector("#imgEnemy-" + e.line + "-" + e.phase);
-											e.shoot = canShoot == i;
-											let reachLowerZone = parseInt((e.y + 48 - shieldTop) / 12);
-											if (reachLowerZone >= 0)
-											{
-												destroyShieldLine(reachLowerZone);
-											}
-										}
-						);
+		enemies.forEach((e, i) =>
+            {
+				e.x += enemyMovement.turn ? 0 : 25 * enemyMovement.way;
+				e.phase = e.phase == 1 ? 2 : 1;
+				e.img = document.querySelector("#imgEnemy-" + e.line + "-" + e.phase);
+				e.shoot = canShoot == i;
+				let reachLowerZone = parseInt((e.y + 48 - shieldTop) / 12);
+				if (reachLowerZone >= 0)
+				{
+					destroyShieldLine(reachLowerZone);
+				}
+			}
+		);
 		enemiesContext.clearRect(0, 0, enemiesCanvas.width, enemiesCanvas.height);
 		drawEnemies();
 	}
@@ -198,11 +203,12 @@ function updateEnemies()
 	if (Math.random() > .999 && saucer == "")
 	{
 		let type = Math.random();
-		saucer = 	{
-					x: type < .5 ? 0 : $('.gameBoard').width(),
-					speed: type < .5 ? 4 : -4,
-					score: 50 + (parseInt(Math.random() * 3) * 100) + (Math.random() > .5 ? 0 : 50)
-					};
+		saucer = 
+        {
+			x: type < .5 ? 0 : $('.gameBoard').width(),
+			speed: type < .5 ? 4 : -4,
+			score: 50 + (parseInt(Math.random() * 3) * 100) + (Math.random() > .5 ? 0 : 50)
+		};
 	}
 	if (saucer != "")
 	{
@@ -355,42 +361,42 @@ function enemyShoot(enemy)
     ); 
 }
 
-function checkEnemyBulletHit(bullet, bulletIndex) 
-{ 
-    let shield = shields.filter(f => bullet.x > f.x && bullet.x < f.x + 160)[0]; 
-    if (shield) 
-    { 
-        let column = parseInt((bullet.x - shield.x) / 4); 
-        let collision = shield.walls.filter(f => f.coords.column == column && f.value == 1 && bullet.y > (f.coords.line * 4) + shieldTop).sort((a, b) => a.coords.line < b.coords.line ? -1 : 1)[0]; 
-        if (collision) 
-        { 
-            destroyShieldPartFromEnemy(shield, collision); 
-            drawShields(); 
-            bullets.splice(bulletIndex, 1); 
-            return false; 
-        } 
-    }
-    if (bullet.y + 12 > cannon.y && bullet.x >= cannon.x && bullet.x <= cannon.x + 64 && cannonVisible) 
-    { 
-        bullets.splice(bullets.indexOf(bullet), 1); 
-        destroyCannon();
-        drawLives(--numberOflives); 
-        if (numberOflives == 0) 
-        { 
-            gameOver(); 
-            return false; 
-        } 
-        else 
-        { 
-            respawnCannon(); 
-        }
-    } 
-    if (bullet.y > cannon.y + 80) 
-    { 
-        bullets.splice(bullets.indexOf(bullet), 1); 
-    } 
-    return true; 
-} 
+function checkEnemyBulletHit(bullet, bulletIndex)
+{
+	let shield = shields.filter(f => bullet.x > f.x && bullet.x < f.x + 160)[0];
+	if (shield)
+	{
+		let column = parseInt((bullet.x - shield.x) / 4);
+		let collision = shield.walls.filter(f => f.coords.column == column && f.value == 1 && bullet.y > (f.coords.line * 4) + shieldTop).sort((a, b) => a.coords.line < b.coords.line ? -1 : 1)[0];
+		if (collision)
+		{
+			destroyShieldPartFromEnemy(shield, collision);
+			drawShields();
+			bullets.splice(bulletIndex, 1);
+			return false;
+		}
+	}
+	if (bullet.y + 12 > cannon.y && bullet.x >= cannon.x && bullet.x <= cannon.x + 64 && cannonVisible)
+	{
+		bullets.splice(bullets.indexOf(bullet), 1);
+		destroyCannon();
+		drawLives(--numberOfLives);
+		if (numberOfLives == 0)
+		{
+			gameOver();
+			return false;
+		}
+		else
+		{
+			respawnCannon();
+		}
+	}
+	if (bullet.y > cannon.y + 80)
+	{
+		bullets.splice(bullets.indexOf(bullet), 1);
+	}
+	return true;
+}
 
 // un canon est repositionné au point de départ et rendu visible, après un délai d’une seconde et demie après l’explosion du précédent canon
 function respawnCannon() 
@@ -410,8 +416,14 @@ function gameOver()
 { 
     clearInterval(gamePlay); 
     gamePlay = 0; 
-    $('.body') 
-           .append('<label class="gameOver">GAME OVER</label>'); 
+    $('body').append('<label class="gameOver">GAME OVER</label>');
+    setTimeout  ( 
+        () =>  { 
+                 cleanScreen(); 
+                 mainMenu(); 
+               }, 
+               3000 
+      );  
 }
 
 function addToScore(points) 

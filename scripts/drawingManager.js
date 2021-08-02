@@ -143,11 +143,12 @@ function destroyEnemy(enemy)
 }
 
 // Image socoupe volante
-function drawSaucer() 
-{ 
-    enemiesContext.clearRect(saucer.x - 4, 2, 64, 48); 
-    enemiesContext.drawImage(saucerImg, saucer.x, 2); 
+function drawSaucer()
+{
+	enemiesContext.clearRect(saucer.x - 4, 2, 64, 48);
+	enemiesContext.drawImage(document.getElementById("imgSaucer"), saucer.x, 2);
 }
+
 
 // supprime la soucoupe volante de l’aire de jeu et qui montre une explosion lorsqu’un missile la touche.
 function destroySaucer() 
@@ -194,7 +195,7 @@ function destroyEnemyBullet(bullet)
 
 function drawLives() 
 { 
-    let htmlString = String('<img class="playerLive" src="images/cannon.png">').repeat(numberOflives); 
+    let htmlString = String('<img class="playerLive" src="images/cannon.png">').repeat(numberOfLives); 
     $('#lives').html(htmlString); 
 }
 
@@ -203,4 +204,15 @@ function destroyShieldLine(line)
     let linePos = shieldTop + ((line - 2) * 12); 
     shieldsContext.clearRect(0, linePos, $('.gameBoard').width(), 24); 
     shields.forEach( e => e.walls.filter( f => f.coords.line <= line * 3).forEach(f => f.value = 0)); 
-} 
+}
+
+function cleanScreen() 
+{ 
+    let width = $('.gameBoard').width(); 
+    let height = $('.gameBoard').height(); 
+    cannonContext.clearRect(0, 0, width, height); 
+    shieldsContext.clearRect(0, 0, width, height); 
+    enemiesContext.clearRect(0, 0, width, height); 
+    bulletsContext.clearRect(0, 0, width, height);
+    $('.gameOver').remove();
+}

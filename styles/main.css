@@ -33,9 +33,9 @@ body
 }  
 .gameZone 
 { 
-    width: 60%; 
+    width: 70%; 
     height: 80%; 
-    left: 19%; 
+    left: 15%; 
     position: relative; 
     top: 3%; 
 }  
@@ -88,7 +88,7 @@ body
     position: absolute; 
     left: 30%; 
     top: 46%; 
-    font-family: Rokkitt; 
+  
     font-size: 320%; 
     font-weight: bold; 
     letter-spacing: 26px; 
@@ -130,4 +130,34 @@ body
 { 
     position: relative; 
     left: 170px; 
+}
+.mainMenu 
+{ 
+    padding-top: 15px; 
+    font-size: 130%; 
+    font-variant-caps: small-caps; 
+    font-family: Rokkitt;
 } 
+ 
+.mainMenu img 
+{ 
+    border-style: none; 
+    vertical-align: middle; 
+    display: inline-block; 
+    margin-right: 20px;
+} 
+ 
+.mainMenu p 
+{ 
+    line-height: 0; 
+} 
+ 
+.title 
+{ 
+    font-size: 190%; 
+} 
+ 
+.bigLine 
+{ 
+    line-height: 2 !important; 
+}  

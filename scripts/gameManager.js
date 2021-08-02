@@ -23,6 +23,7 @@ let highScore;
 // initialise les variables nécessaires au bon déroulement d’une partie
 function initGame() 
 {
+    initSounds();
     cannonVisible = true; 
     shieldTop = parseInt($('.gameBoard').height() - 170);
     cannon = {
@@ -151,7 +152,7 @@ function updateEnemies()
 	let speed = Math.max(4, enemies.length * 2);
 	if (++enemyMovement.rythm % speed == 0)
 	{
-		enemyMovement.moveStep = enemyMovement.moveStep > 4 ? 1 : enemyMovement.moveStep;
+        playMoveSound();		enemyMovement.moveStep = enemyMovement.moveStep > 4 ? 1 : enemyMovement.moveStep;
 		let xLeftLimit = Math.max(...enemies.map(e => e.x)) + 60;
 		let xRightLimit = Math.min(...enemies.map(e => e.x));
 		let maxLeft = $('.gameBoard').width();
@@ -202,6 +203,7 @@ function updateEnemies()
 	}
 	if (Math.random() > .999 && saucer == "")
 	{
+        playSaucerSound();
 		let type = Math.random();
 		saucer = 
         {
@@ -241,6 +243,7 @@ function cannonShoot()
 { 
     if (cannonReady && cannonVisible) 
     { 
+        playShootSound(); 
         cannonReady = false;
         bullets.push(
             { 

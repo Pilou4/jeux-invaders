@@ -137,6 +137,7 @@ function destroyShieldPart(shield, collision)
 
 function destroyEnemy(enemy) 
 { 
+    playExplodeSound(); 
     enemiesContext.clearRect(enemy.x, enemy.y, 48, 48); 
     enemiesContext.drawImage(imgExplosion3, enemy.x, enemy.y); 
     setTimeout(e => enemiesContext.clearRect(enemy.x, enemy.y, 48, 48), 100); 
@@ -153,6 +154,7 @@ function drawSaucer()
 // supprime la soucoupe volante de l’aire de jeu et qui montre une explosion lorsqu’un missile la touche.
 function destroySaucer() 
 { 
+    playExplodeSound(); 
     enemiesContext.clearRect(saucer.x, 2, 48, 48); 
     enemiesContext.drawImage(imgExplosion3, saucer.x, 2); 
     setTimeout(e => enemiesContext.clearRect(saucer.x, 2, 48, 48), 100); 
@@ -180,6 +182,7 @@ function destroyShieldPartFromEnemy(shield, collision)
 
 function destroyCannon() 
 { 
+    playCannonExplodeSound();
     cannonContext.clearRect(cannon.x, cannon.y, 64, 64); 
     cannonContext.drawImage(imgExplosion3, cannon.x + 8, cannon.y + 8); 
     setTimeout(e => cannonContext.clearRect(cannon.x, cannon.y, 64, 64), 250); 
